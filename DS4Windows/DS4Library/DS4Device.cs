@@ -8,6 +8,7 @@ using System.Diagnostics;
 
 using System.Linq;
 using System.Drawing;
+using DS4WinWPF.DS4Control.ControllerServiceDeviceOptions;
 
 namespace DS4Windows
 {

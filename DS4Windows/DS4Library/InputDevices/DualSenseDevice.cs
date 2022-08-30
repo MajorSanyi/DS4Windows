@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using DS4Windows;
+using DS4WinWPF.DS4Control.ControllerServiceDeviceOptions;
 
 namespace DS4Windows.InputDevices
 {

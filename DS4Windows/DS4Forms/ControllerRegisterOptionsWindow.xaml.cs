@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using DS4WinWPF.DS4Forms.ViewModels;
 using DS4Windows;
+using DS4WinWPF.DS4Control.ControllerServiceDeviceOptions;
 
 namespace DS4WinWPF.DS4Forms
 {

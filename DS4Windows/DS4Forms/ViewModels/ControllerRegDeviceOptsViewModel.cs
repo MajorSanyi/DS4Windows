@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using DS4Windows;
 using DS4WinWPF.DS4Forms.ViewModels.Util;
-using LEDBarMode = DS4Windows.DualSenseControllerOptions.LEDBarMode;
-using MuteLEDMode = DS4Windows.DualSenseControllerOptions.MuteLEDMode;
-using LinkMode = DS4Windows.JoyConDeviceOptions.LinkMode;
-using JoinedGyroProvider = DS4Windows.JoyConDeviceOptions.JoinedGyroProvider;
+using LEDBarMode = DS4WinWPF.DS4Control.ControllerServiceDeviceOptions.DualSenseControllerOptions.LEDBarMode;
+using MuteLEDMode = DS4WinWPF.DS4Control.ControllerServiceDeviceOptions.DualSenseControllerOptions.MuteLEDMode;
+using LinkMode = DS4WinWPF.DS4Control.ControllerServiceDeviceOptions.JoyConDeviceOptions.LinkMode;
+using JoinedGyroProvider = DS4WinWPF.DS4Control.ControllerServiceDeviceOptions.JoyConDeviceOptions.JoinedGyroProvider;
+using DS4WinWPF.DS4Control.ControllerServiceDeviceOptions;
 
 namespace DS4WinWPF.DS4Forms.ViewModels
 {
