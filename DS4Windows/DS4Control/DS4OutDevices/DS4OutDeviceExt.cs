@@ -115,8 +115,10 @@ namespace DS4Windows
         protected override void MapAllAxis(DS4State state, SASteeringWheelEmulationAxisType steeringWheelMappedAxis)
         {
             DS4AxisDto dS4AxisDto = SetAllAxis(state, steeringWheelMappedAxis);
-            outDS4Report.bTriggerL = dS4AxisDto.LeftTrigger;
-            outDS4Report.bTriggerR = dS4AxisDto.RightTrigger;
+            if (dS4AxisDto.LeftTrigger != null)
+                outDS4Report.bTriggerL = (byte)dS4AxisDto.LeftTrigger;
+            if (dS4AxisDto.RightTrigger != null)
+                outDS4Report.bTriggerR = (byte)dS4AxisDto.RightTrigger;
             outDS4Report.bThumbLX = dS4AxisDto.LX;
             outDS4Report.bThumbLY = dS4AxisDto.LY;
             outDS4Report.bThumbRX = dS4AxisDto.RX;

@@ -12,7 +12,7 @@ namespace DS4WinWPF.DS4Control.DS4OutDevices
         public byte LY { get; set; }
         public byte RX { get; set; }
         public byte RY { get; set; }
-        public byte LeftTrigger { get; set; }
-        public byte RightTrigger { get; set; }
+        public byte? LeftTrigger { get; set; }
+        public byte? RightTrigger { get; set; }
     }
 }

@@ -67,8 +67,10 @@ namespace DS4WinWPF.DS4Control.DS4OutDevices
         protected override void MapAllAxis(DS4State state, SASteeringWheelEmulationAxisType steeringWheelMappedAxis)
         {
             DS4AxisDto dS4AxisDto = SetAllAxis(state, steeringWheelMappedAxis);
-            Cont.LeftTrigger = dS4AxisDto.LeftTrigger;
-            Cont.RightTrigger = dS4AxisDto.RightTrigger;
+            if (dS4AxisDto.LeftTrigger != null)
+                Cont.LeftTrigger = (byte)dS4AxisDto.LeftTrigger;
+            if (dS4AxisDto.RightTrigger != null)
+                Cont.RightTrigger = (byte)dS4AxisDto.RightTrigger;
             Cont.LeftThumbX = dS4AxisDto.LX;
             Cont.LeftThumbY = dS4AxisDto.LY;
             Cont.RightThumbX = dS4AxisDto.RX;
