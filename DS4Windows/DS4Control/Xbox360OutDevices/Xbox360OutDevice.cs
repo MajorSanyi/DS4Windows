@@ -17,7 +17,9 @@ namespace DS4Windows
         private const float recipInputPosResolution = 1 / 127f;
         private const float recipInputNegResolution = 1 / 128f;
         private const int outputResolution = 32767 - (-32768);
-        public const string devType = "X360";
+        private const string devType = "X360";
+        public override string GetDeviceType => devType;
+
 
         public IXbox360Controller cont;
         //public Xbox360FeedbackReceivedEventHandler forceFeedbackCall;
@@ -165,7 +167,6 @@ namespace DS4Windows
             cont.Disconnect();
             cont = null;
         }
-        public override string GetDeviceType() => devType;
 
         public override void ResetState(bool submit=true)
         {

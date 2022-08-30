@@ -184,7 +184,7 @@ namespace DS4WinWPF.DS4Forms.ViewModels
                 string temp = "Empty";
                 if (outSlotDevice.OutputDevice != null)
                 {
-                    temp = outSlotDevice.OutputDevice.GetDeviceType();
+                    temp = outSlotDevice.OutputDevice.GetDeviceType;
                 }
 
                 return temp;

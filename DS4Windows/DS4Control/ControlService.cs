@@ -1096,7 +1096,7 @@ namespace DS4Windows
             if (slotDevice.CurrentInputBound == OutSlotDevice.InputBound.Unbound)
             {
                 OutputDevice dev = slotDevice.OutputDevice;
-                string tempType = dev.GetDeviceType();
+                string tempType = dev.GetDeviceType;
                 slotDevice.CurrentInputBound = OutSlotDevice.InputBound.Unbound;
                 outputslotMan.DeferredRemoval(dev, -1, outputDevices, false);
                 LogDebug($"Unplugging virtual {tempType} Controller");
@@ -1280,7 +1280,7 @@ namespace DS4Windows
                 OutSlotDevice slotDevice = outputslotMan.GetOutSlotDevice(dev);
                 if (dev != null && slotDevice != null)
                 {
-                    string tempType = dev.GetDeviceType();
+                    string tempType = dev.GetDeviceType;
                     LogDebug($"Disassociate {tempType} Controller from{(slotDevice.CurrentReserveStatus == OutSlotDevice.ReserveStatus.Permanent ? " permanent" : "")} slot #{slotDevice.Index+1} for input {device.DisplayName} controller #{index + 1}", false);
 
                     OutContType currentType = activeOutDevType[index];

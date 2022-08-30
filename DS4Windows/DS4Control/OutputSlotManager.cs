@@ -260,7 +260,7 @@ namespace DS4Windows
                 OutSlotDevice tmp = outputSlots[i];
                 if (tmp.CurrentInputBound == OutSlotDevice.InputBound.Unbound &&
                     (tmp.CurrentAttachedStatus == OutSlotDevice.AttachedStatus.Attached &&
-                    (tmp.OutputDevice != null && tmp.OutputDevice.GetDeviceType() == devtype)))
+                    (tmp.OutputDevice != null && tmp.OutputDevice.GetDeviceType == devtype)))
                 {
                     temp = tmp;
                     break;
