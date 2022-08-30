@@ -7,6 +7,7 @@ using DS4WinWPF.DS4Control.Common;
 using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets;
 using Nefarius.ViGEm.Client.Targets.Xbox360;
+using static System.Windows.Forms.AxHost;
 
 namespace DS4Windows
 {
@@ -24,8 +25,7 @@ namespace DS4Windows
         public IXbox360Controller cont;
         //public Xbox360FeedbackReceivedEventHandler forceFeedbackCall;
         // Input index, Xbox360FeedbackReceivedEventHandler instance
-        public Dictionary<int, Xbox360FeedbackReceivedEventHandler> forceFeedbacksDict =
-            new Dictionary<int, Xbox360FeedbackReceivedEventHandler>();
+        public Dictionary<int, Xbox360FeedbackReceivedEventHandler> forceFeedbacksDict => new();
 
         public Xbox360OutDevice(ViGEmClient client)
         {
@@ -67,6 +67,76 @@ namespace DS4Windows
             cont.RightTrigger = state.R2;
 
             SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Global.GetSASteeringWheelEmulationAxis(device);
+            SetAxisFull(state, steeringWheelMappedAxis);
+
+            cont.SubmitReport();
+        }
+
+        private short AxisScale(Int32 Value, Boolean Flip)
+        {
+            unchecked
+            {
+                Value -= 0x80;
+                float recipRun = Value >= 0 ? recipInputPosResolution : recipInputNegResolution;
+
+                float temp = Value * recipRun;
+                //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
+                if (Flip) temp = -temp;
+                temp = (temp + 1.0f) * 0.5f;
+
+                return (short)(temp * outputResolution + (-32768));
+            }
+        }
+
+        public override void Connect()
+        {
+            cont.Connect();
+            connected = true;
+        }
+        public override void Disconnect()
+        {
+            foreach (KeyValuePair<int, Xbox360FeedbackReceivedEventHandler> pair in forceFeedbacksDict)
+            {
+                cont.FeedbackReceived -= pair.Value;
+            }
+
+            forceFeedbacksDict.Clear();
+
+            connected = false;
+            cont.Disconnect();
+            cont = null;
+        }
+
+        public override void ResetState(bool submit = true)
+        {
+            cont.ResetReport();
+            if (submit)
+            {
+                cont.SubmitReport();
+            }
+        }
+
+        public override void RemoveFeedbacks()
+        {
+            foreach (KeyValuePair<int, Xbox360FeedbackReceivedEventHandler> pair in forceFeedbacksDict)
+            {
+                cont.FeedbackReceived -= pair.Value;
+            }
+
+            forceFeedbacksDict.Clear();
+        }
+
+        public override void RemoveFeedback(int inIdx)
+        {
+            if (forceFeedbacksDict.TryGetValue(inIdx, out Xbox360FeedbackReceivedEventHandler handler))
+            {
+                cont.FeedbackReceived -= handler;
+                forceFeedbacksDict.Remove(inIdx);
+            }
+        }
+
+        private void SetAxisFull(DS4State state, SASteeringWheelEmulationAxisType steeringWheelMappedAxis)
+        {
             switch (steeringWheelMappedAxis)
             {
                 case SASteeringWheelEmulationAxisType.None:
@@ -128,71 +198,6 @@ namespace DS4Windows
                 default:
                     // Should never come here but just in case use the NONE case as default handler....
                     goto case SASteeringWheelEmulationAxisType.None;
-            }
-
-            cont.SubmitReport();
-        }
-
-        private short AxisScale(Int32 Value, Boolean Flip)
-        {
-            unchecked
-            {
-                Value -= 0x80;
-                float recipRun = Value >= 0 ? recipInputPosResolution : recipInputNegResolution;
-
-                float temp = Value * recipRun;
-                //if (Flip) temp = (temp - 0.5f) * -1.0f + 0.5f;
-                if (Flip) temp = -temp;
-                temp = (temp + 1.0f) * 0.5f;
-
-                return (short)(temp * outputResolution + (-32768));
-            }
-        }
-
-        public override void Connect()
-        {
-            cont.Connect();
-            connected = true;
-        }
-        public override void Disconnect()
-        {
-            foreach (KeyValuePair<int, Xbox360FeedbackReceivedEventHandler> pair in forceFeedbacksDict)
-            {
-                cont.FeedbackReceived -= pair.Value;
-            }
-
-            forceFeedbacksDict.Clear();
-
-            connected = false;
-            cont.Disconnect();
-            cont = null;
-        }
-
-        public override void ResetState(bool submit=true)
-        {
-            cont.ResetReport();
-            if (submit)
-            {
-                cont.SubmitReport();
-            }
-        }
-
-        public override void RemoveFeedbacks()
-        {
-            foreach (KeyValuePair<int, Xbox360FeedbackReceivedEventHandler> pair in forceFeedbacksDict)
-            {
-                cont.FeedbackReceived -= pair.Value;
-            }
-
-            forceFeedbacksDict.Clear();
-        }
-
-        public override void RemoveFeedback(int inIdx)
-        {
-            if (forceFeedbacksDict.TryGetValue(inIdx, out Xbox360FeedbackReceivedEventHandler handler))
-            {
-                cont.FeedbackReceived -= handler;
-                forceFeedbacksDict.Remove(inIdx);
             }
         }
     }

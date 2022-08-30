@@ -11,7 +11,7 @@ namespace DS4Windows
 {
     class DS4OutDeviceExt : DS4OutDevice
     {
-        private byte[] rawOutReportEx = new byte[63];
+        private readonly byte[] rawOutReportEx = new byte[63];
         private DS4_REPORT_EX outDS4Report;
 
         public DS4OutDeviceExt(ViGEmClient client) : base(client)
@@ -23,7 +23,7 @@ namespace DS4Windows
             if (!connected) return;
 
             ushort tempButtons = 0;
-            DualShock4DPadDirection tempDPad = DualShock4DPadDirection.None;
+            DualShock4DPadDirection tempDPad;
             ushort tempSpecial = 0;
 
             unchecked
@@ -33,20 +33,7 @@ namespace DS4Windows
                 if (state.R3) tempButtons |= DualShock4Button.ThumbRight.Value;
                 if (state.Options) tempButtons |= DualShock4Button.Options.Value;
 
-                if (state.DpadUp && state.DpadRight) tempDPad = DualShock4DPadDirection.Northeast;
-                else if (state.DpadUp && state.DpadLeft) tempDPad = DualShock4DPadDirection.Northwest;
-                else if (state.DpadUp) tempDPad = DualShock4DPadDirection.North;
-                else if (state.DpadRight && state.DpadDown) tempDPad = DualShock4DPadDirection.Southeast;
-                else if (state.DpadRight) tempDPad = DualShock4DPadDirection.East;
-                else if (state.DpadDown && state.DpadLeft) tempDPad = DualShock4DPadDirection.Southwest;
-                else if (state.DpadDown) tempDPad = DualShock4DPadDirection.South;
-                else if (state.DpadLeft) tempDPad = DualShock4DPadDirection.West;
-
-                /*if (state.DpadUp) tempDPad = (state.DpadRight) ? DualShock4DPadValues.Northeast : DualShock4DPadValues.North;
-                if (state.DpadRight) tempDPad = (state.DpadDown) ? DualShock4DPadValues.Southeast : DualShock4DPadValues.East;
-                if (state.DpadDown) tempDPad = (state.DpadLeft) ? DualShock4DPadValues.Southwest : DualShock4DPadValues.South;
-                if (state.DpadLeft) tempDPad = (state.DpadUp) ? DualShock4DPadValues.Northwest : DualShock4DPadValues.West;
-                */
+                tempDPad = GetDpadDirection(state);
 
                 if (state.L1) tempButtons |= DualShock4Button.ShoulderLeft.Value;
                 if (state.R1) tempButtons |= DualShock4Button.ShoulderRight.Value;
@@ -72,68 +59,7 @@ namespace DS4Windows
             outDS4Report.bTriggerR = state.R2;
 
             SASteeringWheelEmulationAxisType steeringWheelMappedAxis = Global.GetSASteeringWheelEmulationAxis(device);
-            switch (steeringWheelMappedAxis)
-            {
-                case SASteeringWheelEmulationAxisType.None:
-                    outDS4Report.bThumbLX = state.LX;
-                    outDS4Report.bThumbLY = state.LY;
-                    outDS4Report.bThumbRX = state.RX;
-                    outDS4Report.bThumbRY = state.RY;
-                    break;
-
-                case SASteeringWheelEmulationAxisType.LX:
-                    outDS4Report.bThumbLX = (byte)state.SASteeringWheelEmulationUnit;
-                    outDS4Report.bThumbLY = state.LY;
-                    outDS4Report.bThumbRX = state.RX;
-                    outDS4Report.bThumbRY = state.RY;
-                    break;
-
-                case SASteeringWheelEmulationAxisType.LY:
-                    outDS4Report.bThumbLX = state.LX;
-                    outDS4Report.bThumbLY = (byte)state.SASteeringWheelEmulationUnit;
-                    outDS4Report.bThumbRX = state.RX;
-                    outDS4Report.bThumbRY = state.RY;
-                    break;
-
-                case SASteeringWheelEmulationAxisType.RX:
-                    outDS4Report.bThumbLX = state.LX;
-                    outDS4Report.bThumbLY = state.LY;
-                    outDS4Report.bThumbRX = (byte)state.SASteeringWheelEmulationUnit;
-                    outDS4Report.bThumbRY = state.RY;
-                    break;
-
-                case SASteeringWheelEmulationAxisType.RY:
-                    outDS4Report.bThumbLX = state.LX;
-                    outDS4Report.bThumbLY = state.LY;
-                    outDS4Report.bThumbRX = state.RX;
-                    outDS4Report.bThumbRY = (byte)state.SASteeringWheelEmulationUnit;
-                    break;
-
-                case SASteeringWheelEmulationAxisType.L2R2:
-                    outDS4Report.bTriggerL = outDS4Report.bTriggerR = 0;
-                    if (state.SASteeringWheelEmulationUnit >= 0) outDS4Report.bTriggerL = (Byte)state.SASteeringWheelEmulationUnit;
-                    else outDS4Report.bTriggerR = (Byte)state.SASteeringWheelEmulationUnit;
-                    goto case SASteeringWheelEmulationAxisType.None;
-
-                case SASteeringWheelEmulationAxisType.VJoy1X:
-                case SASteeringWheelEmulationAxisType.VJoy2X:
-                    DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit, ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) + 1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_X);
-                    goto case SASteeringWheelEmulationAxisType.None;
-
-                case SASteeringWheelEmulationAxisType.VJoy1Y:
-                case SASteeringWheelEmulationAxisType.VJoy2Y:
-                    DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit, ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) + 1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_Y);
-                    goto case SASteeringWheelEmulationAxisType.None;
-
-                case SASteeringWheelEmulationAxisType.VJoy1Z:
-                case SASteeringWheelEmulationAxisType.VJoy2Z:
-                    DS4Windows.VJoyFeeder.vJoyFeeder.FeedAxisValue(state.SASteeringWheelEmulationUnit, ((((uint)steeringWheelMappedAxis) - ((uint)SASteeringWheelEmulationAxisType.VJoy1X)) / 3) + 1, DS4Windows.VJoyFeeder.HID_USAGES.HID_USAGE_Z);
-                    goto case SASteeringWheelEmulationAxisType.None;
-
-                default:
-                    // Should never come here but just in case use the NONE case as default handler....
-                    goto case SASteeringWheelEmulationAxisType.None;
-            }
+            MapAllAxis(state, steeringWheelMappedAxis);
 
             // Only worry about mapping 1 touch packet
             outDS4Report.bTouchPacketsN = 1;
@@ -171,7 +97,7 @@ namespace DS4Windows
 
         public override void ResetState(bool submit = true)
         {
-            outDS4Report = default(DS4_REPORT_EX);
+            outDS4Report = default;
             outDS4Report.wButtons &= unchecked((ushort)~0X0F);
             outDS4Report.wButtons |= 0x08;
             outDS4Report.bThumbLX = 0x80;
@@ -184,6 +110,17 @@ namespace DS4Windows
             {
                 Cont.SubmitRawReport(rawOutReportEx);
             }
+        }
+
+        protected override void MapAllAxis(DS4State state, SASteeringWheelEmulationAxisType steeringWheelMappedAxis)
+        {
+            DS4AxisDto dS4AxisDto = SetAllAxis(state, steeringWheelMappedAxis);
+            outDS4Report.bTriggerL = dS4AxisDto.LeftTrigger;
+            outDS4Report.bTriggerR = dS4AxisDto.RightTrigger;
+            outDS4Report.bThumbLX = dS4AxisDto.LX;
+            outDS4Report.bThumbLY = dS4AxisDto.LY;
+            outDS4Report.bThumbRX = dS4AxisDto.RX;
+            outDS4Report.bThumbRY = dS4AxisDto.RY;
         }
     }
 }
