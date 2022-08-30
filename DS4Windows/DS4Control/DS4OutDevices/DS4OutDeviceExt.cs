@@ -1,4 +1,5 @@
-﻿using Nefarius.ViGEm.Client;
+﻿using DS4WinWPF.DS4Control.DS4OutDevices;
+using Nefarius.ViGEm.Client;
 using Nefarius.ViGEm.Client.Targets.DualShock4;
 using System;
 using System.Collections.Generic;
@@ -165,7 +166,7 @@ namespace DS4Windows
             DS4OutDeviceExtras.CopyBytes(ref outDS4Report, rawOutReportEx);
             //Console.WriteLine("TEST: {0}, {1} {2}", outDS4Report.wGyroX, rawOutReportEx[12], rawOutReportEx[13]);
             //Console.WriteLine("OUTPUT: {0}", string.Join(", ", rawOutReportEx));
-            cont.SubmitRawReport(rawOutReportEx);
+            Cont.SubmitRawReport(rawOutReportEx);
         }
 
         public override void ResetState(bool submit = true)
@@ -181,7 +182,7 @@ namespace DS4Windows
 
             if (submit)
             {
-                cont.SubmitRawReport(rawOutReportEx);
+                Cont.SubmitRawReport(rawOutReportEx);
             }
         }
     }

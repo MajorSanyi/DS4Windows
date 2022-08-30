@@ -13,6 +13,8 @@ using SharpOSC;
 using static DS4Windows.Global;
 using DS4WinWPF.DS4Control;
 using DS4Windows.DS4Control;
+using DS4WinWPF.DS4Control.Common;
+using DS4WinWPF.DS4Control.DS4OutDevices;
 
 namespace DS4Windows
 {

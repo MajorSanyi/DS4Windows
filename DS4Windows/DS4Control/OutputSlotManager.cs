@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using DS4WinWPF.DS4Control;
+using DS4WinWPF.DS4Control.Common;
 using Nefarius.ViGEm.Client;
 
 namespace DS4Windows
